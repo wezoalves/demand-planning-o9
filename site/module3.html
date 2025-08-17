@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Plataforma o9 na Prática – Diferentes Perfis</title>
+    <!-- Tailwind CSS via CDN for quick styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-o8CgHn7SXsAD69vLcBGo3S9m3edPxDdL5bsZ5qmyVriJvhf7t4JUcs72/0X5A5c0hTojcfEwEgbhZL+Y8qP3Tg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* Personalização da barra de rolagem para estética */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #F1F5F9; }
+        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+    <div class="flex min-h-screen">
+        <!-- Sidebar navigation -->
+        <aside class="w-64 bg-white border-r border-gray-200 flex-shrink-0 hidden lg:block">
+            <div class="px-6 py-6">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4">Módulos de Aprendizagem</h2>
+                <nav class="space-y-2 text-sm">
+                    <a href="index.html" class="flex items-center px-3 py-2 rounded-lg hover:bg-gray-100">
+                        <i class="fa-solid fa-house mr-3"></i> Início
+                    </a>
+                    <a href="module1.html" class="flex items-center px-3 py-2 rounded-lg hover:bg-gray-100">
+                        <i class="fa-solid fa-brain mr-3 text-blue-500"></i>
+                        Introdução à o9 Solutions
+                    </a>
+                    <a href="module2.html" class="flex items-center px-3 py-2 rounded-lg hover:bg-gray-100">
+                        <i class="fa-solid fa-chart-line mr-3 text-green-500"></i>
+                        Fundamentos do Planejamento de Demanda
+                    </a>
+                    <!-- Destacar o módulo atual -->
+                    <a href="module3.html" class="flex items-center px-3 py-2 rounded-lg bg-purple-100 text-purple-700 font-medium">
+                        <i class="fa-solid fa-users mr-3"></i>
+                        A Plataforma o9 na Prática
+                    </a>
+                    <a href="module4.html" class="flex items-center px-3 py-2 rounded-lg hover:bg-gray-100">
+                        <i class="fa-solid fa-cubes-stacked mr-3 text-orange-500"></i>
+                        Capacidades Avançadas
+                    </a>
+                    <a href="module5.html" class="flex items-center px-3 py-2 rounded-lg hover:bg-gray-100">
+                        <i class="fa-solid fa-ellipsis mr-3 text-gray-500"></i>
+                        Outros Tópicos
+                    </a>
+                </nav>
+            </div>
+        </aside>
+        <!-- Main content area -->
+        <main class="flex-1">
+            <!-- Header -->
+            <header class="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200">
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="flex items-center space-x-2">
+                        <img src="https://static.thenounproject.com/png/2210693-200.png" alt="o9 logo" class="w-8 h-8">
+                        <div>
+                            <h1 class="text-lg font-semibold text-gray-800">o9 Learning Hub</h1>
+                            <p class="text-xs text-gray-500">Planejamento de Demanda &amp; Digital Brain</p>
+                        </div>
+                    </a>
+                </div>
+            </header>
+            <!-- Content -->
+            <section class="px-6 py-8 max-w-3xl mx-auto">
+                <h2 class="text-2xl font-bold mb-4">A Plataforma o9 na Prática para Diferentes Perfis</h2>
+                <p class="mb-4">
+                    O planejamento de demanda é uma disciplina <strong>transversal</strong> que envolve diversos departamentos. Ele integra análises históricas, inteligência de mercado e contribuições de vendas, marketing, finanças e operações para criar um plano consensual. Nesta seção, exploraremos como diferentes profissionais utilizam a plataforma o9 para tomar decisões melhores.
+                </p>
+                <h3 class="text-xl font-semibold mt-6 mb-2">Papéis e Responsabilidades</h3>
+                <p class="mb-2">A plataforma o9 oferece ferramentas específicas para cada função dentro do processo de planejamento. Confira como cada perfil atua:</p>
+                <ul class="list-disc list-inside space-y-2 mb-4">
+                    <li><strong>Planejador de Demanda:</strong> usa análises estatísticas e dados de mercado para gerar previsões, alinhando riscos e oportunidades. Além de calcular previsões, ele promove consenso entre vendas, marketing e finanças, garantindo um plano unificado.</li>
+                    <li><strong>Planejador de Suprimentos / Supply Chain:</strong> transforma as previsões em planos de produção e abastecimento, otimiza estoques e monitora a execução. Trabalha em conjunto com demand planners e finanças para assegurar custos e níveis de serviço adequados.</li>
+                    <li><strong>Finanças:</strong> incorpora o plano de demanda aos orçamentos e ao controle de custos, avaliando impactos financeiros e contribuindo para o equilíbrio entre margem e crescimento.</li>
+                    <li><strong>Vendas e Marketing:</strong> aportam informações sobre comportamento de consumidores, tendências de mercado e ciclos de vida de produtos, influenciando promoções e lançamentos.</li>
+                    <li><strong>TI e Ciência de Dados:</strong> mantêm a infraestrutura de dados e algoritmos, garantindo qualidade da informação, integração com sistemas externos e aplicação de modelos de machine learning para melhorar a precisão.</li>
+                </ul>
+                <h3 class="text-xl font-semibold mt-6 mb-2">Funcionalidades da Plataforma</h3>
+                <p class="mb-4">A solução de Planejamento de Demanda da o9 incorpora capacidades avançadas que atendem a esses perfis:</p>
+                <ul class="list-disc list-inside space-y-2 mb-4">
+                    <li><strong>Geração de Previsões:</strong> combina modelos estatísticos clássicos, aprendizagem de máquina e <em>time‑series</em> para criar previsões detalhadas e multigranulares. Permite incorporar dados de novos produtos (<em>NPI</em>) e ajustar rapidamente curvas de lançamento.</li>
+                    <li><strong>Planejamento Colaborativo:</strong> facilita a criação de um consenso, agregando inputs de diferentes equipes e registrando hipóteses e premissas. A plataforma oferece workflows de aprovação e comentários em tempo real.</li>
+                    <li><strong>Integração com Operações:</strong> integra previsões de demanda com planejamento de suprimentos, permitindo simular cenários de capacidade e otimizar estoques. Ferramentas de <em>demand sensing</em> captam sinais de mercado para ajustar planos rapidamente.</li>
+                    <li><strong>Análises de Causa e Efeito:</strong> permite explorar drivers de demanda, segmentar produtos e clientes e avaliar impacto de promoções ou eventos externos nas previsões.</li>
+                </ul>
+                <h3 class="text-xl font-semibold mt-6 mb-2">Exemplos de Uso por Indústria</h3>
+                <p class="mb-4">Diversos setores se beneficiam das capacidades da o9:</p>
+                <ul class="list-disc list-inside space-y-2 mb-4">
+                    <li><strong>Varejo de Moda:</strong> empresas utilizam análises estatísticas para planejar sortimentos sazonais, ajustando estoques e ofertas conforme tendências de moda.</li>
+                    <li><strong>Indústria Automotiva:</strong> fabricantes e fornecedores colaboram com clientes e distribuidores para ajustar previsões conforme mudanças na produção e na demanda de veículos, criando um plano compartilhado.</li>
+                    <li><strong>Eletrônicos de Consumo:</strong> negócios combinam inteligência de mercado e dados de pontos de venda para antecipar lançamentos e ciclos de vida de produtos, sincronizando marketing e supply chain.</li>
+                </ul>
+                <p>Ao combinar ferramentas de previsão, colaboração e análise avançada, a plataforma o9 ajuda profissionais de diferentes áreas a tomar decisões alinhadas, melhorando a precisão das previsões, reduzindo custos operacionais e aumentando a satisfação do cliente.</p>
+            </section>
+            <!-- Footer -->
+            <footer class="px-6 py-4 text-center text-xs text-gray-500 bg-white border-t border-gray-200">
+                <p>&copy; 2025 o9 Solutions – Conteúdo educacional adaptado de materiais oficiais e referências de mercado.</p>
+            </footer>
+        </main>
+    </div>
+</body>
+</html>
