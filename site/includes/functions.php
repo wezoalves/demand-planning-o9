@@ -14,7 +14,14 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Gerar ID de sessão único se não existir
 if (!isset($_SESSION['session_id'])) {
-    $_SESSION['session_id'] = uniqid('user_', true);
+    // Tentar recuperar do cookie primeiro
+    if (isset($_COOKIE['o9_user_id'])) {
+        $_SESSION['session_id'] = $_COOKIE['o9_user_id'];
+    } else {
+        $_SESSION['session_id'] = uniqid('user_', true);
+        // Salvar no cookie por 1 ano
+        setcookie('o9_user_id', $_SESSION['session_id'], time() + (365 * 24 * 60 * 60), '/');
+    }
 }
 
 $db = Database::getInstance();
@@ -26,7 +33,23 @@ function markAsRead($contentId)
 {
     global $db;
     $sessionId = $_SESSION['session_id'];
-    return $db->markAsRead($sessionId, $contentId);
+    $result = $db->markAsRead($sessionId, $contentId);
+
+    if ($result) {
+        // Salvar no localStorage via JavaScript
+        echo "<script>
+            if (typeof localStorage !== 'undefined') {
+                let progress = JSON.parse(localStorage.getItem('o9_progress') || '{}');
+                progress['content_" . (string)$contentId . "'] = {
+                    read: true,
+                    timestamp: new Date().toISOString()
+                };
+                localStorage.setItem('o9_progress', JSON.stringify(progress));
+            }
+        </script>";
+    }
+
+    return $result;
 }
 
 /**
@@ -46,7 +69,20 @@ function unmarkAsRead($contentId)
 {
     global $db;
     $sessionId = $_SESSION['session_id'];
-    return $db->unmarkAsRead($sessionId, $contentId);
+    $result = $db->unmarkAsRead($sessionId, $contentId);
+
+    if ($result) {
+        // Remover do localStorage via JavaScript
+        echo "<script>
+            if (typeof localStorage !== 'undefined') {
+                let progress = JSON.parse(localStorage.getItem('o9_progress') || '{}');
+                delete progress['content_" . (string)$contentId . "'];
+                localStorage.setItem('o9_progress', JSON.stringify(progress));
+            }
+        </script>";
+    }
+
+    return $result;
 }
 
 /**
@@ -99,7 +135,7 @@ function getChapterContents($chapterId)
 }
 
 /**
- * Obter conteúdo específico
+ * Obter conteúdo por ID
  */
 function getContent($contentId)
 {
@@ -117,16 +153,7 @@ function getContentBySlug($slug)
 }
 
 /**
- * Buscar conteúdos
- */
-function searchContents($query)
-{
-    global $db;
-    return $db->searchContents($query);
-}
-
-/**
- * Obter próximo conteúdo na sequência
+ * Obter próximo conteúdo
  */
 function getNextContent($currentContentId, $chapterId)
 {
@@ -135,41 +162,48 @@ function getNextContent($currentContentId, $chapterId)
 }
 
 /**
- * Processar ações de marcação/desmarcação
+ * Obter últimos conteúdos lidos
  */
-function processReadActions()
+function getRecentReads($limit = 5)
 {
-    // Não processar ações do admin
-    if (basename($_SERVER['SCRIPT_NAME']) === 'admin.php') {
-        return;
-    }
+    global $db;
+    return $db->getRecentReads($_SESSION['session_id'], $limit);
+}
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (isset($_POST['action'])) {
-            switch ($_POST['action']) {
-                case 'mark_read':
-                    if (isset($_POST['content_id'])) {
-                        markAsRead($_POST['content_id']);
-                    }
-                    break;
-                case 'unmark_read':
-                    if (isset($_POST['content_id'])) {
-                        unmarkAsRead($_POST['content_id']);
-                    }
-                    break;
-                case 'clear_all':
-                    // Limpar todo o progresso da sessão atual
-                    global $db;
-                    $sessionId = $_SESSION['session_id'];
-                    $db->getConnection()->prepare("DELETE FROM user_progress WHERE session_id = ?")->execute([$sessionId]);
-                    break;
+/**
+ * Obter próximo conteúdo não lido
+ */
+function getNextUnreadContent()
+{
+    global $db;
+    return $db->getNextUnreadContent($_SESSION['session_id']);
+}
+
+/**
+ * Sincronizar progresso do localStorage com o banco
+ */
+function syncProgressFromLocalStorage()
+{
+    echo "<script>
+        if (typeof localStorage !== 'undefined') {
+            const progress = JSON.parse(localStorage.getItem('o9_progress') || '{}');
+            const contentIds = Object.keys(progress).filter(key => key.startsWith('content_'));
+            
+            if (contentIds.length > 0) {
+                // Enviar progresso para sincronizar com o banco
+                fetch('sync_progress.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        progress: progress,
+                        contentIds: contentIds.map(id => id.replace('content_', ''))
+                    })
+                });
             }
-
-            // Redirecionar para evitar reenvio do formulário
-            header('Location: ' . $_SERVER['REQUEST_URI']);
-            exit;
         }
-    }
+    </script>";
 }
 
 /**
@@ -182,12 +216,12 @@ function generateBreadcrumb($chapterNumber = null, $contentTitle = null)
     if ($chapterNumber) {
         $chapterInfo = getChapterInfo($chapterNumber);
         if ($chapterInfo) {
-            $breadcrumb[] = '<a href="capitulo' . $chapterNumber . '.php">' . $chapterInfo['title'] . '</a>';
+            $breadcrumb[] = '<a href="chapter.php?chapter=' . $chapterNumber . '">' . $chapterInfo['title'] . '</a>';
         }
     }
 
     if ($contentTitle) {
-        $breadcrumb[] = '<span class="text-gray-500">' . $contentTitle . '</span>';
+        $breadcrumb[] = '<span style="color: hsl(var(--muted-foreground));">' . $contentTitle . '</span>';
     }
 
     return implode(' > ', $breadcrumb);
@@ -201,30 +235,81 @@ function generateNavigation()
     $chapters = getAllChapters();
     $html = '';
 
+    // Obter página atual
+    $currentPage = basename($_SERVER['PHP_SELF'], '.php');
+
+    // Grupo principal - Ferramentas (movido para cima)
+    $html .= '<div class="sidebar-group">';
+    $html .= '<div class="sidebar-group-label">Ferramentas</div>';
+    $html .= '<div class="sidebar-group-content">';
+
+    $html .= '<a href="index.php" class="nav-item' . ($currentPage == 'index' ? ' active' : '') . '" title="Início">';
+    $html .= '<i class="fa-solid fa-home"></i>';
+    $html .= '<span class="nav-text">Início</span>';
+    $html .= '</a>';
+
+    $html .= '<a href="dashboard.php" class="nav-item' . ($currentPage == 'dashboard' ? ' active' : '') . '" title="Dashboard">';
+    $html .= '<i class="fa-solid fa-chart-line"></i>';
+    $html .= '<span class="nav-text">Dashboard</span>';
+    $html .= '</a>';
+
+    $html .= '<a href="#" class="nav-item" title="Histórico">';
+    $html .= '<i class="fa-solid fa-history"></i>';
+    $html .= '<span class="nav-text">Histórico</span>';
+    $html .= '</a>';
+
+    $html .= '</div>';
+    $html .= '</div>';
+
+    // Grupo secundário - Capítulos (movido para baixo)
+    $html .= '<div class="sidebar-group">';
+    $html .= '<div class="sidebar-group-label">Módulos de Estudo</div>';
+    $html .= '<div class="sidebar-group-content">';
+
     foreach ($chapters as $chapter) {
         $progress = getChapterProgress($chapter['id']);
         $contents = getChapterContents($chapter['id']);
 
-        $html .= '<div class="chapter-group">';
-        $html .= '<a href="chapter.php?chapter=' . $chapter['number'] . '" class="flex items-center px-3 py-2 rounded-lg hover:bg-' . $chapter['color'] . '-50 text-gray-700 hover:text-' . $chapter['color'] . '-700 transition-colors">';
-        $html .= '<i class="fa-solid ' . $chapter['icon'] . ' mr-3 text-' . $chapter['color'] . '-600"></i>';
-        $html .= '<span class="font-medium">' . $chapter['title'] . '</span>';
-        $html .= '<i class="fa-solid fa-chevron-down ml-auto text-gray-400 text-xs"></i>';
-        $html .= '</a>';
+        // Verificar se é o capítulo ativo (por número ou por conteúdo)
+        $isActive = false;
+        if (isset($_GET['chapter']) && $_GET['chapter'] == $chapter['number']) {
+            $isActive = true;
+        } elseif (isset($_GET['slug'])) {
+            // Verificar se o slug atual pertence a este capítulo
+            foreach ($contents as $content) {
+                if ($_GET['slug'] == $content['slug']) {
+                    $isActive = true;
+                    break;
+                }
+            }
+        }
 
-        $html .= '<div class="chapter-submenu ml-6 mt-2 space-y-1">';
+        $html .= '<div class="nav-item' . ($isActive ? ' active' : '') . '" data-chapter="' . $chapter['number'] . '" title="' . htmlspecialchars($chapter['title']) . '">';
+        $html .= '<i class="fa-solid ' . $chapter['icon'] . '"></i>';
+        $html .= '<span class="nav-text">' . $chapter['title'] . '</span>';
+        $html .= '<i class="fa-solid fa-chevron-right nav-chevron"></i>';
+        $html .= '</div>';
+
+        // Submenu para os conteúdos do capítulo (fechado por padrão)
+        $html .= '<div class="nav-submenu collapsed" id="submenu-' . $chapter['number'] . '">';
         foreach ($contents as $content) {
             $isRead = isRead($content['id']);
-            $readClass = $isRead ? 'text-green-600' : 'text-gray-600';
-            $readIcon = $isRead ? '<i class="fa-solid fa-check-circle mr-2 text-green-500"></i>' : '';
+            $isContentActive = isset($_GET['slug']) && $_GET['slug'] == $content['slug'];
 
-            $html .= '<a href="content.php?slug=' . $content['slug'] . '" class="block px-3 py-1 text-sm ' . $readClass . ' hover:text-' . $chapter['color'] . '-600 hover:bg-' . $chapter['color'] . '-50 rounded">';
-            $html .= $readIcon . $content['title'];
+            $html .= '<a href="content.php?slug=' . $content['slug'] . '" class="nav-submenu-item' . ($isContentActive ? ' active' : '') . '" title="' . htmlspecialchars($content['title']) . '">';
+            if ($isRead) {
+                $html .= '<i class="fa-solid fa-check-circle" style="color: hsl(var(--sidebar-primary));"></i>';
+            } else {
+                $html .= '<i class="fa-solid fa-circle"></i>';
+            }
+            $html .= '<span class="submenu-text">' . $content['title'] . '</span>';
             $html .= '</a>';
         }
         $html .= '</div>';
-        $html .= '</div>';
     }
+
+    $html .= '</div>';
+    $html .= '</div>';
 
     return $html;
 }
@@ -239,8 +324,8 @@ function generateReadButton($contentId, $contentTitle)
     if ($isRead) {
         return '
         <div class="mt-8 text-center">
-            <div class="bg-green-100 border border-green-200 rounded-lg p-4 mb-4">
-                <p class="text-green-800 font-medium">
+            <div class="alert alert-success">
+                <p class="font-medium">
                     <i class="fa-solid fa-check-circle mr-2"></i>
                     Conteúdo marcado como lido
                 </p>
@@ -248,7 +333,7 @@ function generateReadButton($contentId, $contentTitle)
             <form method="POST" class="inline">
                 <input type="hidden" name="action" value="unmark_read">
                 <input type="hidden" name="content_id" value="' . $contentId . '">
-                <button type="submit" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center mx-auto">
+                <button type="submit" class="btn btn-secondary">
                     <i class="fa-solid fa-times mr-2"></i>
                     Desmarcar como Lido
                 </button>
@@ -260,7 +345,7 @@ function generateReadButton($contentId, $contentTitle)
             <form method="POST" class="inline">
                 <input type="hidden" name="action" value="mark_read">
                 <input type="hidden" name="content_id" value="' . $contentId . '">
-                <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center mx-auto">
+                <button type="submit" class="btn btn-primary">
                     <i class="fa-solid fa-check mr-2"></i>
                     Marcar como Lido
                 </button>
@@ -272,4 +357,27 @@ function generateReadButton($contentId, $contentTitle)
 /**
  * Processar ações na página atual
  */
+function processReadActions()
+{
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (isset($_POST['action']) && isset($_POST['content_id'])) {
+            $contentId = (int)$_POST['content_id'];
+
+            if ($_POST['action'] === 'mark_read') {
+                markAsRead($contentId);
+            } elseif ($_POST['action'] === 'unmark_read') {
+                unmarkAsRead($contentId);
+            }
+
+            // Redirecionar para evitar reenvio do formulário
+            header('Location: ' . $_SERVER['REQUEST_URI']);
+            exit;
+        }
+    }
+}
+
+// Processar ações
 processReadActions();
+
+// Sincronizar progresso do localStorage
+syncProgressFromLocalStorage();

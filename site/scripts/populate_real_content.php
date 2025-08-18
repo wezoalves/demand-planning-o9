@@ -113,7 +113,7 @@ $chapters = [
     [
         'number' => 3,
         'title' => 'Integrated Business Planning (IBP)',
-        'icon' => 'fa-cogs',
+        'icon' => 'fa-gears',
         'color' => 'purple',
         'description' => 'Diferenças entre S&OP e IBP, alinhamento de áreas, ciclo de IBP, colaboração cross-functional e benefícios estratégicos.',
         'file' => '../../book/03-Integrated Business Planning (IBP).md'
@@ -121,7 +121,7 @@ $chapters = [
     [
         'number' => 4,
         'title' => 'Revenue Growth Management (RGM)',
-        'icon' => 'fa-chart-bar',
+        'icon' => 'fa-chart-column',
         'color' => 'orange',
         'description' => 'Estratégias de precificação, promoções e sortimento, identificação de alavancas de crescimento e simulações para otimizar decisões.',
         'file' => '../../book/04-Revenue Growth Management (RGM).md'

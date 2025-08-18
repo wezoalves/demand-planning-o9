@@ -33,79 +33,81 @@ include 'includes/header.php';
 ?>
 
 <!-- Chapter Header -->
-<div class="bg-gradient-to-r from-<?php echo $chapter['color']; ?>-50 to-<?php echo $chapter['color']; ?>-100 rounded-xl p-6 mb-8">
-    <div class="flex items-center mb-4">
-        <i class="fa-solid <?php echo $chapter['icon']; ?> text-<?php echo $chapter['color']; ?>-600 text-3xl mr-4"></i>
+<div class="hero">
+    <div class="card-header">
+        <div class="card-icon">
+            <i class="fa-solid <?php echo $chapter['icon']; ?>"></i>
+        </div>
         <div>
-            <h1 class="text-3xl font-bold text-<?php echo $chapter['color']; ?>-800"><?php echo htmlspecialchars($chapter['title']); ?></h1>
-            <p class="text-<?php echo $chapter['color']; ?>-700 mt-2"><?php echo htmlspecialchars($chapter['description']); ?></p>
+            <h1 class="hero-title"><?php echo htmlspecialchars($chapter['title']); ?></h1>
+            <p class="hero-description"><?php echo htmlspecialchars($chapter['description']); ?></p>
         </div>
     </div>
 </div>
 
 <!-- Progress -->
-<div class="mt-6">
-    <div class="flex items-center justify-between mb-2">
-        <span class="text-sm font-medium text-<?php echo $chapter['color']; ?>-800">Progresso do Capítulo</span>
-        <span class="text-sm text-<?php echo $chapter['color']; ?>-600"><?php echo $progress; ?>%</span>
+<div class="progress-section">
+    <div class="progress-header">
+        <span class="progress-label">Progresso do Capítulo</span>
+        <span class="progress-text"><?php echo $progress; ?>%</span>
     </div>
-    <div class="w-full bg-<?php echo $chapter['color']; ?>-200 rounded-full h-3">
-        <div class="bg-<?php echo $chapter['color']; ?>-600 h-3 rounded-full transition-all duration-300"
-            style="width: <?php echo $progress; ?>%"></div>
+    <div class="progress-bar-container">
+        <div class="progress-bar" style="width: <?php echo $progress; ?>%"></div>
     </div>
 </div>
 
 <!-- Chapter Contents -->
-<div class="mb-8">
-    <h3 class="text-2xl font-bold mb-6">Conteúdos do Capítulo</h3>
-    <div class="grid gap-4">
-        <?php foreach ($contents as $content): ?>
-            <?php $isRead = isRead($content['id']); ?>
-            <div class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <?php if ($isRead): ?>
-                            <i class="fa-solid fa-check-circle text-green-500 mr-4 text-xl"></i>
-                        <?php else: ?>
-                            <div class="w-6 h-6 border-2 border-gray-300 rounded-full mr-4"></div>
-                        <?php endif; ?>
+<div class="section-header">
+    <h3 class="section-title">Conteúdos do Capítulo</h3>
+    <p class="section-description">Explore todos os conteúdos disponíveis neste capítulo.</p>
+</div>
 
-                        <div class="flex-1">
-                            <h4 class="text-lg font-semibold text-gray-800 mb-2">
-                                <?php echo htmlspecialchars($content['title']); ?>
-                            </h4>
-                            <p class="text-gray-600 text-sm">
-                                <?php
-                                // Aqui você pode adicionar uma descrição curta do conteúdo
-                                echo "Conteúdo sobre " . strtolower($content['title']);
-                                ?>
-                            </p>
-                        </div>
-                    </div>
+<div class="grid grid-cols-1">
+    <?php foreach ($contents as $content): ?>
+        <?php $isRead = isRead($content['id']); ?>
+        <div class="card">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <?php if ($isRead): ?>
+                        <i class="fa-solid fa-check-circle" style="color: hsl(var(--primary)); margin-right: 1rem; font-size: 1.25rem;"></i>
+                    <?php else: ?>
+                        <div style="width: 1.5rem; height: 1.5rem; border: 2px solid hsl(var(--border)); border-radius: 50%; margin-right: 1rem;"></div>
+                    <?php endif; ?>
 
-                    <div class="flex items-center space-x-3">
-                        <?php if ($isRead): ?>
-                            <span class="text-sm text-green-600 font-medium">Lido</span>
-                        <?php endif; ?>
-                        <a href="content.php?slug=<?php echo $content['slug']; ?>"
-                            class="bg-<?php echo $chapter['color']; ?>-500 hover:bg-<?php echo $chapter['color']; ?>-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                            <?php echo $isRead ? 'Revisar' : 'Ler'; ?>
-                        </a>
+                    <div class="flex-1">
+                        <h4 class="card-title">
+                            <?php echo htmlspecialchars($content['title']); ?>
+                        </h4>
+                        <p class="card-description">
+                            <?php
+                            // Aqui você pode adicionar uma descrição curta do conteúdo
+                            echo "Conteúdo sobre " . strtolower($content['title']);
+                            ?>
+                        </p>
                     </div>
                 </div>
+
+                <div class="flex items-center gap-3">
+                    <?php if ($isRead): ?>
+                        <span class="text-sm font-medium" style="color: hsl(var(--primary));">Lido</span>
+                    <?php endif; ?>
+                    <a href="content.php?slug=<?php echo $content['slug']; ?>" class="btn btn-primary">
+                        <?php echo $isRead ? 'Revisar' : 'Ler'; ?>
+                    </a>
+                </div>
             </div>
-        <?php endforeach; ?>
-    </div>
+        </div>
+    <?php endforeach; ?>
 </div>
 
 <!-- Chapter Summary -->
-<div class="bg-gray-50 border border-gray-200 rounded-lg p-6">
-    <h3 class="text-xl font-semibold mb-4">Resumo do Capítulo</h3>
-    <p class="text-gray-700 leading-relaxed">
+<div class="card mt-8">
+    <h3 class="section-title">Resumo do Capítulo</h3>
+    <p class="card-description">
         <?php echo htmlspecialchars($chapter['description']); ?>
     </p>
 
-    <div class="mt-4 flex items-center text-sm text-gray-600">
+    <div class="flex items-center text-sm" style="color: hsl(var(--muted-foreground)); margin-top: 1rem;">
         <i class="fa-solid fa-clock mr-2"></i>
         <span>Tempo estimado de leitura: <?php echo count($contents) * 8; ?> minutos</span>
     </div>

@@ -335,4 +335,36 @@ class Database
         $stmt->execute([$chapterId, $currentContentId]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    public function getRecentReads($sessionId, $limit = 5)
+    {
+        $stmt = $this->db->prepare("
+            SELECT c.title, c.slug, ch.title as chapter_title, ch.number as chapter_number, up.read_at
+            FROM user_progress up
+            JOIN contents c ON up.content_id = c.id
+            JOIN chapters ch ON c.chapter_id = ch.id
+            WHERE up.session_id = ? AND up.is_read = 1
+            ORDER BY up.read_at DESC
+            LIMIT ?
+        ");
+        $stmt->execute([$sessionId, $limit]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getNextUnreadContent($sessionId)
+    {
+        $stmt = $this->db->prepare("
+            SELECT c.*, ch.title as chapter_title, ch.number as chapter_number 
+            FROM contents c
+            JOIN chapters ch ON c.chapter_id = ch.id
+            WHERE c.id NOT IN (
+                SELECT content_id FROM user_progress 
+                WHERE session_id = ? AND is_read = 1
+            )
+            ORDER BY ch.number, c.order_index
+            LIMIT 1
+        ");
+        $stmt->execute([$sessionId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }
