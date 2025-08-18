@@ -78,12 +78,12 @@ include 'includes/header.php';
 
     <div class="content-footer-right">
         <?php if ($nextContent): ?>
-            <a href="content.php?slug=<?php echo $nextContent['slug']; ?>" class="btn btn-primary">
+            <a href="/content.php?slug=<?php echo $nextContent['slug']; ?>" class="btn btn-primary">
                 Próxima Lição
                 <i class="fa-solid fa-arrow-right ml-2"></i>
             </a>
         <?php else: ?>
-            <a href="dashboard.php" class="btn btn-secondary">
+            <a href="/dashboard.php" class="btn btn-secondary">
                 Ver Dashboard
                 <i class="fa-solid fa-chart-line ml-2"></i>
             </a>

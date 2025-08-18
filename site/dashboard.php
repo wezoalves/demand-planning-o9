@@ -119,7 +119,7 @@ include 'includes/header.php';
             </div>
 
             <?php if ($stat['progress'] < 100): ?>
-                <a href="chapter.php?chapter=<?php echo $stat['chapter']['number']; ?>" class="card-link">
+                <a href="/chapter.php?chapter=<?php echo $stat['chapter']['number']; ?>" class="card-link">
                     Continuar módulo →
                 </a>
             <?php else: ?>
@@ -177,7 +177,7 @@ include 'includes/header.php';
                     <p class="text-sm mb-3" style="color: hsl(var(--muted-foreground));">
                         módulo <?php echo $nextContent['chapter_number']; ?> - <?php echo htmlspecialchars($nextContent['chapter_title']); ?>
                     </p>
-                    <a href="content.php?slug=<?php echo $nextContent['slug']; ?>" class="btn btn-primary">
+                    <a href="/content.php?slug=<?php echo $nextContent['slug']; ?>" class="btn btn-primary">
                         Continuar Aprendendo
                     </a>
                 </div>
@@ -187,7 +187,7 @@ include 'includes/header.php';
                     <p class="text-sm mb-3" style="color: hsl(var(--muted-foreground));">
                         Você concluiu todos os conteúdos disponíveis.
                     </p>
-                    <a href="index.php" class="btn btn-secondary">
+                    <a href="/index.php" class="btn btn-secondary">
                         Revisar Conteúdos
                     </a>
                 </div>

@@ -1,60 +1,77 @@
-## 📊 Planejamento de Demanda
+# o9 Learning Hub
 
-* Fundamentos do planejamento de demanda (por que fazer, níveis de hierarquia, estrutura do plano).
-* Métodos estatísticos, agregação e desagregação de dados.
-* Riscos e oportunidades no planejamento (simulações e impacto nos planos).
-* Precisão de forecast e uso de cockpit de análise.
-* Dificuldades práticas do planejador de demanda no varejo e melhores práticas para superar.
-* Abordagens modernas: planejamento ágil, digital twins, inteligência artificial aplicada à previsão.
+Plataforma de aprendizado sobre planejamento de demanda e gestão de fornecedores.
 
----
+## Estrutura do Projeto
 
-## 🔗 Gestão de Relacionamento com Fornecedores (SRM)
+```
+o9.com/
+├── index.php          # Proxy principal (ponto de entrada)
+├── .htaccess          # Configurações do Apache
+├── README.md          # Documentação
+├── book/              # Conteúdo dos capítulos (Markdown)
+└── site/              # Aplicação principal
+    ├── index.php      # Página inicial
+    ├── dashboard.php  # Dashboard de progresso
+    ├── content.php    # Visualizador de conteúdo
+    ├── chapter.php    # Lista de capítulos
+    ├── admin.php      # Painel administrativo
+    ├── style.css      # Estilos CSS
+    ├── config/        # Configurações
+    ├── includes/      # Arquivos incluídos
+    ├── scripts/       # Scripts de população
+    └── data/          # Banco de dados SQLite
+```
 
-* Gestão de riscos com fornecedores: monitoramento, mapeamento e mitigação.
-* Métricas-chave: tempo de reação e tempo de resolução.
-* Colaboração com fornecedores (além de compromissos de oferta/demanda).
-* Visibilidade de múltiplos níveis da cadeia de suprimentos (tiers).
-* Principais erros de percepção sobre gestão de risco.
-* Casos práticos: crises como enchentes em Taiwan, COVID-19, falta de chips.
-* Uso de IA e GenAI para antecipar riscos e apoiar decisões.
-* Práticas de segmentação e onboarding de fornecedores para colaboração eficiente.
+## Configuração da Hospedagem
 
----
+### Estrutura de Arquivos
+- **Raiz**: Contém apenas o proxy (`index.php`) e configurações
+- **Pasta `site/`**: Contém toda a aplicação
 
-## 🚀 Integrated Business Planning (IBP)
+### Funcionamento do Proxy
+O arquivo `index.php` na raiz:
+1. Captura todas as requisições
+2. Redireciona para a pasta `site/`
+3. Serve arquivos estáticos (CSS, JS, imagens)
+4. Executa arquivos PHP da aplicação
 
-* Diferença entre S\&OP e IBP.
-* Como alinhar áreas de vendas, finanças, supply e marketing em um único processo.
-* Ciclo de IBP: revisão de demanda, suprimentos, financeiros e executivos.
-* Papel da colaboração cross-funcional e simulações de cenários.
-* Benefícios de IBP para resiliência, crescimento de receita e tomada de decisão.
+### URLs Funcionais
+- `/` → `site/index.php`
+- `/dashboard` → `site/dashboard.php`
+- `/content.php?slug=...` → `site/content.php?slug=...`
+- `/style.css` → `site/style.css`
 
----
+## Tecnologias
 
-## 💡 Revenue Growth Management
+- **Backend**: PHP 8.2+
+- **Banco de Dados**: SQLite
+- **Frontend**: HTML5, CSS3, JavaScript
+- **Design**: shadcn/ui inspired
+- **Ícones**: FontAwesome 6
 
-* Estratégias de precificação, promoções e sortimento.
-* Identificação de alavancas de crescimento em categorias e canais.
-* Papel de dados e analytics na definição de preços e promoções.
-* Trade-offs entre volume, preço e margem.
-* Simulações para otimizar decisões comerciais e financeiras.
+## Funcionalidades
 
----
+- ✅ Sistema de progresso com persistência
+- ✅ Dashboard de aprendizado
+- ✅ Navegação por capítulos e conteúdos
+- ✅ Sidebar responsivo
+- ✅ Footer fixo com controles
+- ✅ Sistema de busca
+- ✅ Design responsivo
 
-## 🧠 Plataforma o9 Digital Brain
+## Instalação
 
-* Conceito de **Digital Brain**: integração de dados, analytics e planejamento em tempo real.
-* Como a plataforma conecta funções (demanda, supply, finanças, procurement).
-* Uso de IA para reduzir silos e acelerar decisões.
-* Casos de uso práticos em empresas globais.
-* Caminho para transformação digital com gêmeos digitais e automação.
+1. Fazer upload dos arquivos para a raiz da hospedagem
+2. Garantir que a pasta `site/data/` tenha permissões de escrita
+3. Acessar a URL principal
+4. O sistema criará automaticamente o banco de dados
 
----
+## Desenvolvimento Local
 
-## 🌍 Transformação Digital
+```bash
+cd site
+php -S localhost:8000
+```
 
-* Mudanças culturais e organizacionais necessárias para adoção de novas ferramentas.
-* Papel da liderança em promover a integração de dados e processos.
-* Exemplos de empresas que passaram por transformação digital bem-sucedida.
-* Desafios comuns: resistência interna, dados fragmentados, processos manuais.
+Acesse: http://localhost:8000

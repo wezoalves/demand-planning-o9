@@ -91,7 +91,7 @@ include 'includes/header.php';
                     <?php if ($isRead): ?>
                         <span class="text-sm font-medium" style="color: hsl(var(--primary));">Lido</span>
                     <?php endif; ?>
-                    <a href="content.php?slug=<?php echo $content['slug']; ?>" class="btn btn-primary">
+                    <a href="/content.php?slug=<?php echo $content['slug']; ?>" class="btn btn-primary">
                         <?php echo $isRead ? 'Revisar' : 'Ler'; ?>
                     </a>
                 </div>

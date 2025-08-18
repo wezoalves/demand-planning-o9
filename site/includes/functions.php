@@ -191,7 +191,7 @@ function syncProgressFromLocalStorage()
             
             if (contentIds.length > 0) {
                 // Enviar progresso para sincronizar com o banco
-                fetch('sync_progress.php', {
+                fetch('/sync_progress.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -211,12 +211,12 @@ function syncProgressFromLocalStorage()
  */
 function generateBreadcrumb($chapterNumber = null, $contentTitle = null)
 {
-    $breadcrumb = ['<a href="index.php">Início</a>'];
+    $breadcrumb = ['<a href="/index.php">Início</a>'];
 
     if ($chapterNumber) {
         $chapterInfo = getChapterInfo($chapterNumber);
         if ($chapterInfo) {
-            $breadcrumb[] = '<a href="chapter.php?chapter=' . $chapterNumber . '">' . $chapterInfo['title'] . '</a>';
+            $breadcrumb[] = '<a href="/chapter.php?chapter=' . $chapterNumber . '">' . $chapterInfo['title'] . '</a>';
         }
     }
 
@@ -243,16 +243,16 @@ function generateNavigation()
     $html .= '<div class="sidebar-group-label">Ferramentas</div>';
     $html .= '<div class="sidebar-group-content">';
 
-    $html .= '<a href="index.php" class="nav-item' . ($currentPage == 'index' ? ' active' : '') . '" title="Início">';
+    $html .= '<a href="/index.php" class="nav-item' . ($currentPage == 'index' ? ' active' : '') . '" title="Início">';
     $html .= '<i class="fa-solid fa-home"></i>';
     $html .= '<span class="nav-text">Início</span>';
     $html .= '</a>';
-
-    $html .= '<a href="dashboard.php" class="nav-item' . ($currentPage == 'dashboard' ? ' active' : '') . '" title="Dashboard">';
+    
+    $html .= '<a href="/dashboard.php" class="nav-item' . ($currentPage == 'dashboard' ? ' active' : '') . '" title="Dashboard">';
     $html .= '<i class="fa-solid fa-chart-line"></i>';
     $html .= '<span class="nav-text">Dashboard</span>';
     $html .= '</a>';
-
+    
     $html .= '<a href="#" class="nav-item" title="Histórico">';
     $html .= '<i class="fa-solid fa-history"></i>';
     $html .= '<span class="nav-text">Histórico</span>';
@@ -296,7 +296,7 @@ function generateNavigation()
             $isRead = isRead($content['id']);
             $isContentActive = isset($_GET['slug']) && $_GET['slug'] == $content['slug'];
 
-            $html .= '<a href="content.php?slug=' . $content['slug'] . '" class="nav-submenu-item' . ($isContentActive ? ' active' : '') . '" title="' . htmlspecialchars($content['title']) . '">';
+            $html .= '<a href="/content.php?slug=' . $content['slug'] . '" class="nav-submenu-item' . ($isContentActive ? ' active' : '') . '" title="' . htmlspecialchars($content['title']) . '">';
             if ($isRead) {
                 $html .= '<i class="fa-solid fa-check-circle" style="color: hsl(var(--sidebar-primary));"></i>';
             } else {

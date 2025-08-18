@@ -94,8 +94,8 @@ $chapters = getAllChapters();
             <p class="card-description">
                 <?php echo htmlspecialchars($chapter['description']); ?>
             </p>
-            <a href="chapter.php?chapter=<?php echo $chapter['number']; ?>" class="card-link">
-                Explorar módulo →
+            <a href="/chapter.php?chapter=<?php echo $chapter['number']; ?>" class="card-link">
+                Explorar capítulo →
             </a>
         </div>
     <?php endforeach; ?>
